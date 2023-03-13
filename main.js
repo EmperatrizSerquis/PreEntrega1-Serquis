@@ -2,8 +2,6 @@ alert('HOLA!! Estás ingresando al simulador del costo de la Casa de tus Sueños
 alert('Somos Casas JS!')
 alert('Expertos en Tasación y Venta de Propiedades')
 alert('Sabías que el valor de una propiedad depende mayormente de:  \n - La Ubicación \n - La Cantidad de Ambientes  \n - La Cantidad de Metros Cuadrados ')
-alert('Ahora, imagina en que zona te gustaría vivir, y cuantos ambientes te gustaría que tenga tu próxima vivienda.')
-alert('Si querés saber cuanto dinero necesitás para comprar esa propiedad, decinos tu nombre y continuemos: ')
 
 const metrosDormitorio = 9
 const metrosLiving = 18
@@ -24,6 +22,11 @@ const promedioMetroCuadrado = (metroBelgrano + metroPalermo + metroRecoleta + me
 const metrosDosAmbientes = (metrosDormitorio * 1) + (metrosLiving * 1) + (metrosCocina * 1) + (metrosBano * 1)
 const promedioDosAmbientes = metrosDosAmbientes * promedioMetroCuadrado
 
+alert('Te contamos los valores de metro cuadrado por cada barrio: \n 1- Belgrano: u$s '  + metroBelgrano + ' \n 2- Palermo: u$s '  + metroBelgrano + ' \n 3- Recoleta: u$s '  + metroPalermo + ' \n 4- Caballito: u$s '  + metroCaballito + ' \n  5- Almagro: u$s '  + metroAlmagro + ' \n  6- Mataderos: u$s '  + metroMataderos + ' \n  7- Barracas: u$s '  + metroBarracas + ' \n  8- La Boca: u$s '  + metroBoca + ' \n Y que un departamento de 2 ambientes con Living Comedor más un dormitorio y un baño de ' + metrosDosAmbientes + ' metros cuadrados te saldría en promedio : u$s ' + promedioDosAmbientes)
+
+alert('Ahora, imagina en que zona te gustaría vivir, y cuantos ambientes te gustaría que tenga tu próxima vivienda.')
+alert('Si querés saber cuanto dinero necesitás para comprar esa propiedad, decinos tu nombre y continuemos: ')
+
 let cliente = ''
 
 cliente = prompt('Ingresá tu Nombre:')
@@ -42,12 +45,8 @@ const dondeVivir = (nombreCliente) => {
         let strDormitorios = ' Dormitorios'
         let strBanios = ' Baños'
         let totalAmbientes = 0
-        
-        informarBarrios()
-        
-        barrioElegido = parseInt(prompt('¿Cuál es el número del Barrio que te gusta?'))
 
-        nombreBarrio = elegirBarrio(nombreCliente, barrioElegido)
+        nombreBarrio = elegirBarrio(nombreCliente,barrioElegido)
 
         valorMetroElegido = valorMetroCuadrado(nombreBarrio)
 
@@ -106,24 +105,31 @@ const clienteValidado = (cliente) => {
 const elegirBarrio = (clienteValidado,barrioElegido) => {
 
     let confirmaBarrio = false
-    
+        
     do {
-               
+
+        informarBarrios()
+        
+        barrioElegido = parseInt(prompt('¿Cuál es el número del Barrio que te gusta?'))
+
         let barrioCorrecto = validarBarrio(barrioElegido)
 
         nombreBarrio = nombreBarrioElegido(barrioCorrecto)
 
         alert(clienteValidado + ' Elegiste vivir en ' + nombreBarrio)
 
-        confirmaBarrio = confirm('¿Querés cambiarlo?')
+        confirmaBarrio = confirm('¿Queres cambiar de barrio?')
+
+               
         
     } while (confirmaBarrio)  
-  
+
+    
     return nombreBarrio
 
 }
 
-const validarBarrio = (barrioElegido, clienteValidado) => {
+const validarBarrio = (barrioElegido) => {
 
     while (Number.isNaN(barrioElegido) || barrioElegido === 0 || barrioElegido > 8 ) {
         
@@ -185,7 +191,7 @@ const nombreBarrioElegido = (numeroBarrio) => {
             nombreBarrio = 'La Boca'
             break
         default:
-            alert('No elegiste ningún barrio! Igual te contamos los valores de metro cuadrado por cada barrio: \n 1- Belgrano: u$s '  + metroBelgrano + ' \n 2- Palermo: u$s '  + metroBelgrano + ' \n 3- Recoleta: u$s '  + metroPalermo + ' \n 4- Caballito: u$s '  + metroCaballito + ' \n  5- Almagro: u$s '  + metroAlmagro + ' \n  6- Mataderos: u$s '  + metroMataderos + ' \n  7- Barracas: u$s '  + metroBarracas + ' \n  8- La Boca: u$s '  + metroBoca + ' \n Y que un departamento de 2 ambientes con 1 dormitorios más cocina y Living Comedor de ' + metrosDosAmbientes + ' metros cuadrados te saldría en promedio : u$s ' + dosAmbientes)
+            alert('No elegiste ningún barrio! Igual te contamos los valores de metro cuadrado por cada barrio: \n 1- Belgrano: u$s '  + metroBelgrano + ' \n 2- Palermo: u$s '  + metroBelgrano + ' \n 3- Recoleta: u$s '  + metroPalermo + ' \n 4- Caballito: u$s '  + metroCaballito + ' \n  5- Almagro: u$s '  + metroAlmagro + ' \n  6- Mataderos: u$s '  + metroMataderos + ' \n  7- Barracas: u$s '  + metroBarracas + ' \n  8- La Boca: u$s '  + metroBoca + ' \n Y que un departamento de 2 ambientes con 1 dormitorios más cocina y Living Comedor de ' + metrosDosAmbientes + ' metros cuadrados te saldría en promedio : u$s ' + promedioDosAmbientes)
             nombreBarrio = ''
             break
     }
@@ -201,7 +207,7 @@ const metrosPropiedad = (dormitorios,banios) => {
 }
 
 const valorMetroCuadrado = (nombreBarrio) => {
-    
+
     switch (nombreBarrio) {
         case 'Belgrano':
             valorMetro = metroBelgrano
