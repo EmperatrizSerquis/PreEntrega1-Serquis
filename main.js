@@ -3,144 +3,226 @@ alert('Somos Casas JS!')
 alert('Expertos en Tasación y Venta de Propiedades')
 alert('Sabías que el valor de una propiedad depende mayormente de:  \n - La Ubicación \n - La Cantidad de Ambientes  \n - La Cantidad de Metros Cuadrados ')
 
+alert('Ahora, imagina en que zona te gustaría vivir, y cuantos ambientes te gustaría que tenga tu próxima vivienda.')
+alert('Si querés saber cuanto dinero necesitás para comprar esa propiedad, decinos tu nombre y continuemos: ')
+
 const metrosDormitorio = 9
 const metrosLiving = 18
 const metrosCocina = 6
 const metrosBano = 5
-
-const metroBelgrano = 2138
-const metroPalermo = 2079
-const metroRecoleta = 1978
-const metroCaballito = 1861
-const metroAlmagro = 1685
-const metroBarracas = 1478
-const metroMataderos = 1416
-const metroBoca = 1150
-
-const promedioMetroCuadrado = (metroBelgrano + metroPalermo + metroRecoleta + metroCaballito + metroAlmagro + metroBarracas + metroMataderos + metroBoca) / 8
-
-const metrosDosAmbientes = (metrosDormitorio * 1) + (metrosLiving * 1) + (metrosCocina * 1) + (metrosBano * 1)
-const promedioDosAmbientes = metrosDosAmbientes * promedioMetroCuadrado
-
-alert('Te contamos los valores de metro cuadrado por cada barrio: \n 1- Belgrano: u$s '  + metroBelgrano + ' \n 2- Palermo: u$s '  + metroBelgrano + ' \n 3- Recoleta: u$s '  + metroPalermo + ' \n 4- Caballito: u$s '  + metroCaballito + ' \n  5- Almagro: u$s '  + metroAlmagro + ' \n  6- Mataderos: u$s '  + metroMataderos + ' \n  7- Barracas: u$s '  + metroBarracas + ' \n  8- La Boca: u$s '  + metroBoca + ' \n Y que un departamento de 2 ambientes con Living Comedor más un dormitorio y un baño de ' + metrosDosAmbientes + ' metros cuadrados te saldría en promedio : u$s ' + promedioDosAmbientes)
-
-alert('Ahora, imagina en que zona te gustaría vivir, y cuantos ambientes te gustaría que tenga tu próxima vivienda.')
-alert('Si querés saber cuanto dinero necesitás para comprar esa propiedad, decinos tu nombre y continuemos: ')
+const propiedades = []
 
 let cliente = ''
 
 cliente = prompt('Ingresá tu Nombre:')
 
-const dondeVivir = (nombreCliente) => {
 
-    alert('Hola ' + nombreCliente)
+const barriosActualizadoPromedio = (cliente) => {
+   
+     barrios.forEach((barrio) => {
+        barrio.promedio = valorPromedioBarrio(barrio.metroMinimo, barrio.metroMaximo) 
+    })
 
-    let otraPropiedad = false
+    const valorPromedioCaba = valorPromedioTotal()
+
+    const masBarato = buscarMasBarato()
+    const masCaro = buscarMasCaro()
+
+    alert(cliente + ', te vamos a mostrar cuánto vale en metro cuadrado en cada barrio de CABA. \n Tené en cuenta que: \n El valor  PROMEDIO del metro cuadrado es de u$s ' + valorPromedioCaba + '\n El Valor MÍNIMO del metro cuadrado es en el barrio de ' + masBarato.toUpperCase() + '\n El Valor MÁXIMO del metro cuadrado es en el barrio de  ' + masCaro.toUpperCase())
+
+    elegirOrden(cliente)
+}
+
+let ordenado = ''
+const barrioElegido = []
+
+const ordenPosible = ['1- Alfabéticamente', '2- Menor Valor Metro Cuadrado', '3- Mayor Valor Metro Cuadrado']
+
+const elegirOrden = (cliente) => {
+
+    const orden = parseInt(prompt(cliente + ' ¿Cómo ordenamos los valores? Elegí 1, 2 o 3 \n' + ordenPosible.join('\n')))
+
+    if(orden === 1) {
+        ordenarAlfabeticamente()
+    } else if (orden === 2) {
+        ordenarPromedioMasBaratos()
+    } else {
+        ordenarPromedioMasCaros()
+    }
+    
+}
+
+const buscarMasBarato = () => {
+    const minPromedio = barrios.reduce((minProm, item) => minProm.promedio < item.promedio ? minProm : item
+    );
+
+    const barrioMasBarato = minPromedio.nombre + ' con un valor de metro cuadrado promedio de u$s ' + minPromedio.promedio
+    return barrioMasBarato
+
+}
+
+const buscarMasCaro = () => {
+    const maxPromedio = barrios.reduce((maxProm, item) => maxProm.promedio > item.promedio ? maxProm : item
+    );
+
+    const barrioMasCaro = maxPromedio.nombre + ' con un valor de metro cuadrado promedio de u$s ' + maxPromedio.promedio
+    return barrioMasCaro
+
+}
+
+const valorPromedioBarrio = (mMinimo,mMaximo) => {
+    const valorMetroPromedio = parseInt((mMinimo + mMaximo) / 2)
+    return valorMetroPromedio
+}
+
+const valorPromedioTotal = () => {
+    const sumaBarrios = barrios.length
+    const sumaPromedios = barrios.reduce((acc, item) => acc + item.promedio, 0)
+    const promedioTodos = parseInt(sumaPromedios / sumaBarrios)
+    return promedioTodos
+}
+
+const ordenarAlfabeticamente = () => {
+    barrios.sort((a,b) => a.nombre - b.nombre)
+    mostrarBarrios('Alfabéticamente')
+}
+
+const ordenarPromedioMasBaratos = () => {
+    barrios.sort((a,b) => a.promedio - b.promedio)
+    mostrarBarrios('por Valor Promedio mas Baratos')
+}
+
+const ordenarPromedioMasCaros = () => {
+    barrios.sort((a,b) => b.promedio - a.promedio)
+    mostrarBarrios('por Valor Promedio mas Caros')
+}
+
+
+const mostrarBarrios = (ordenado) => {
+    
+    const listaBarrios = barrios.map(barrio => {
+        return '(' + barrio.id + ') ' + barrio.nombre + ' Valor Metro Mínimo: u$s ' + barrio.metroMinimo + ' Valor Metro Máximo: u$s ' + barrio.metroMaximo + ' PROMEDIO: u$s ' + barrio.promedio
+    })
+
+    alert('Lista de barrios ordenados ' + ordenado + '\n\n' + listaBarrios.join('\n'))
+
+    const cambiarOrden = confirm('Si querés cambiar el orden poné "Aceptar" O  "Cancelar" y te muestro el valor de tu barrio preferido')
+    if(cambiarOrden) {
+        elegirOrden()
+    } else {
+        elegirBarrio()
+    }
+    
+}
+
+
+const elegirBarrio = () => {
+
+    let barrioElegido = ''
+    let otraPropiedad = true  
+    let totalAmbientes = 0
+    let totalMetros = 0
+
 
     do {
-        let barrioElegido = 0
-        let valorMetroElegido = 0  
-        let nombreBarrio = ''    
-        let valorPropiedad = 0
-        let strDormitorios = ' Dormitorios'
-        let strBanios = ' Baños'
-        let totalAmbientes = 0
 
-        nombreBarrio = elegirBarrio(nombreCliente,barrioElegido)
+        barrioElegido = prompt('Ingresá el nombre de un barrio para comparar')
 
-        valorMetroElegido = valorMetroCuadrado(nombreBarrio)
+        const barrio = barrios.find(barrio => barrio.nombre.toLowerCase() === barrioElegido.toLowerCase());
 
-        alert('Ahora decidí cuantos ambientes querés que tenga.')
 
-        let cantidadDormitorios = parseInt(prompt('¿Cuántos dormitorios necesitás?'))
-        let dormitoriosCorrecto = validarAmbientes(cantidadDormitorios, 'Dormitorios')
+        if (barrio) {
+            alert('Ahora decidí cuantos ambientes querés que tenga.')
 
-        let cantidadBanios = parseInt(prompt('¿Cuántos baños necesitás?'))
-        let baniosCorrecto = validarAmbientes(cantidadBanios, 'Baños')
+            let cantidadDormitorios = parseInt(prompt('¿Cuántos dormitorios necesitás?'))
+            let dormitoriosCorrecto = validarAmbientes(cantidadDormitorios, 'Dormitorios')
 
-        let totalMetros = metrosPropiedad(dormitoriosCorrecto,baniosCorrecto)
+            let cantidadBanios = parseInt(prompt('¿Cuántos baños necesitás?'))
+            let baniosCorrecto = validarAmbientes(cantidadBanios, 'Baños')
 
-        totalAmbientes = dormitoriosCorrecto + baniosCorrecto + 1
+            totalMetros = metrosPropiedad(dormitoriosCorrecto,baniosCorrecto)
 
-        valorPropiedad = totalMetros * valorMetroElegido
+            totalAmbientes = dormitoriosCorrecto + baniosCorrecto + 1
 
-        if (dormitoriosCorrecto == 1) {
-            strDormitorios = ' Dormitorio';
-        } else if (dormitoriosCorrecto == 0) {
-            dormitoriosCorrecto = ''
-            strDormitorios = ' No tiene Dormitorio';
+            const aceptaMetros = confirm('Tu propiedad elegida tiene ' + totalAmbientes + ' ambientes y el total de metros cuadrados standard es de ' + totalMetros + '\n Si querés modificar la cantidad de metros presioná "Cancelar", sino presioná "Aceptar".')
+
+            if(aceptaMetros == false) {
+
+                const nuevosMetros = parseInt(prompt('Ingresá la cantidad de metros que quisieras que tenga tu vivienda (Solo números menores a 300)'))
+
+                totalMetros = validarMetros(nuevosMetros)
+
+            }
+
+            let barrioNombre = barrio.nombre.toUpperCase()
+            let barrioMax = barrio.metroMaximo
+            let barrioMin = barrio.metroMinimo
+            let barrioProm = barrio.promedio
+
+            listaComparar(barrioNombre, barrioMax, barrioMin, barrioProm, totalAmbientes, dormitoriosCorrecto, baniosCorrecto, totalMetros)
+           
+
+        } else {
+
+            alert('No tenemos registrado ese barrio.')
         }
 
-        if (baniosCorrecto == 1) {
-            strBanios = 'Baño';
-        } else if (baniosCorrecto == 0) {
-            baniosCorrecto = ''
-            strBanios = 'No tiene Baño';
-        }
 
-        alert(nombreCliente + ' Tu propiedad ideal está ubicada en ' + nombreBarrio + '.\n Cuenta con: Living Comedor, cocina, ' + dormitoriosCorrecto +  strDormitorios + ' , ' + baniosCorrecto + ' ' + strBanios + '. \n Tiene un total de ' + totalMetros + ' Metros Cuadrados.   \n Por su ubicación y cantidad de metros, el valor total es de aproximadamente u$S ' + valorPropiedad)
-
-        otraPropiedad = confirm('¿Querés buscar otra alternativa?')
+        otraPropiedad = confirm('¿Querés agregar otro barrio para comparar?')
 
     } while (otraPropiedad)
 
-    alert ('Gracias por utilizar los servicios de Casas JS.')
+    mostrarPropiedades()
 
 }
 
-const clienteValidado = (cliente) => {
+class Propiedad {
+    constructor(nombreBarrio, metrosMax, metrosMin,metroProm, ambientes, dormitorios, banos, metros) {
+        this.nombreBarrio = nombreBarrio.toUpperCase();
+        this.metrosMax = parseInt(metrosMax)
+        this.metrosMin = parseInt(metrosMin)
+        this.metroProm = parseInt(metroProm)
+        this.ambientes = ambientes
+        this.metros = metros
+        this.dormitorios = dormitorios
+        this.banos = banos
+        this.minimo = parseInt(this.metrosMin * metros)
+        this.maximo = parseInt(this.metrosMax * metros)
+        this.promedio = parseInt(this.metroProm * metros)
+    }
+}
 
-    if (cliente == '')  {
 
-        alert('Debes ingresar tu nombre para continuar')
 
-        while (cliente == '')  {
-            cliente = prompt('Ingresá tu Nombre:')
-        }
+const listaComparar = (barrioNombre, barrioMax, barrioMin, barrioProm, totalAmbientes, cantidadDormitorios, cantidadBanios, totalMetros) => {
+
+    const nuevaPropiedad = new Propiedad(barrioNombre, barrioMax, barrioMin, barrioProm, totalAmbientes, cantidadDormitorios, cantidadBanios, totalMetros)
+
+    propiedades.push(nuevaPropiedad)
+
+}
+
+const mostrarPropiedades = () => {
+
+    const listaPropiedades = propiedades.map(propiedad => {
+        return '- ' + propiedad.nombreBarrio + '\n Valor Metro -- Max u$s ' + propiedad.metrosMax + ' -- Min u$s ' + propiedad.metrosMin + ' -- Promedio u$s ' + propiedad.metroProm + '\n Ambientes: ' + propiedad.ambientes + ' -- Metros Cuadrados: ' + propiedad.metros + ' -- Dormitorios: ' + propiedad.dormitorios + ' -- Baños: ' + propiedad.banos + '\n Valor Mínimo u$s ' + propiedad.minimo + ' -- Valor Máximo u$s ' + propiedad.maximo + ' -- Valor Promedio u$s ' + propiedad.promedio
+    })
+
+    alert('Estas son las propiedades de tus sueños: ' + '\n\n ' + listaPropiedades.join('\n\n'))
+    alert('Gracias por tu consulta, esperamos que muy pronto tu SUEÑO se haga realidad. \n ¡NUNCA DEJES DE SOÑAR!')
+
+}
+
+const validarMetros = (nuevosMetros) => {
+
+    while (Number.isNaN(nuevosMetros) ||  nuevosMetros < 0 || nuevosMetros > 300 ) {
+        
+        alert('Necesitamos el número de Metros y este debe ser un número mayor a 0 y menor de 300. Ingresaste: ' + nuevosMetros)
+
+        nuevosMetros = parseInt(prompt('¿Cuántos metros necesitás?'))      
     }
 
-    return cliente
-}
-
-const elegirBarrio = (clienteValidado,barrioElegido) => {
-
-    let confirmaBarrio = false
-        
-    do {
-
-        informarBarrios()
-        
-        barrioElegido = parseInt(prompt('¿Cuál es el número del Barrio que te gusta?'))
-
-        let barrioCorrecto = validarBarrio(barrioElegido)
-
-        nombreBarrio = nombreBarrioElegido(barrioCorrecto)
-
-        alert(clienteValidado + ' Elegiste vivir en ' + nombreBarrio)
-
-        confirmaBarrio = confirm('¿Queres cambiar de barrio?')
-
-               
-        
-    } while (confirmaBarrio)  
-
-    
-    return nombreBarrio
-
-}
-
-const validarBarrio = (barrioElegido) => {
-
-    while (Number.isNaN(barrioElegido) || barrioElegido === 0 || barrioElegido > 8 ) {
-        
-        alert('Necesitamos saber el número del barrio que te gusta para continuar.')
-        
-        informarBarrios()
-
-        barrioElegido = parseInt(prompt('¿Cuál es el número del Barrio que te gusta? '))       
-    }
-
-    return barrioElegido
+    return nuevosMetros
 
 }
 
@@ -157,90 +239,27 @@ const validarAmbientes = (numeroAmbientes, tipoAmbiente) => {
 
 }
 
-const informarBarrios =  () => {
-
-    alert('Acá están los barrios que podés elegir: \n 1- Belgrano \n 2- Palermo \n 3- Recoleta \n 4- Caballito \n  5- Almagro \n  6- Mataderos \n  7- Barracas \n  8- La Boca ')
-
-}
-
-const nombreBarrioElegido = (numeroBarrio) => {
-
-    switch (numeroBarrio) {
-        case 1:
-            nombreBarrio = 'Belgrano'
-            break
-        case 2:
-            nombreBarrio = 'Palermo'
-            break
-        case 3:
-            nombreBarrio = 'Recoleta'
-            break
-        case 4:
-            nombreBarrio = 'Caballito'
-            break
-        case 5:
-            nombreBarrio = 'Almagro'
-            break
-        case 6:
-            nombreBarrio = 'Mataderos'
-            break
-        case 7:
-            nombreBarrio = 'Barracas'
-            break
-        case 8:
-            nombreBarrio = 'La Boca'
-            break
-        default:
-            alert('No elegiste ningún barrio! Igual te contamos los valores de metro cuadrado por cada barrio: \n 1- Belgrano: u$s '  + metroBelgrano + ' \n 2- Palermo: u$s '  + metroBelgrano + ' \n 3- Recoleta: u$s '  + metroPalermo + ' \n 4- Caballito: u$s '  + metroCaballito + ' \n  5- Almagro: u$s '  + metroAlmagro + ' \n  6- Mataderos: u$s '  + metroMataderos + ' \n  7- Barracas: u$s '  + metroBarracas + ' \n  8- La Boca: u$s '  + metroBoca + ' \n Y que un departamento de 2 ambientes con 1 dormitorios más cocina y Living Comedor de ' + metrosDosAmbientes + ' metros cuadrados te saldría en promedio : u$s ' + promedioDosAmbientes)
-            nombreBarrio = ''
-            break
-    }
-
-    return nombreBarrio   
-} 
-
 const metrosPropiedad = (dormitorios,banios) => {
 
-   const metrosTotales = (metrosDormitorio * dormitorios) + (metrosLiving * 1) + (metrosCocina * 1) + (metrosBano * banios)
+    const metrosTotales = (metrosDormitorio * dormitorios) + (metrosLiving * 1) + (metrosCocina * 1) + (metrosBano * banios)
 
-   return metrosTotales
-}
+    return metrosTotales
+ }
 
-const valorMetroCuadrado = (nombreBarrio) => {
+ const clienteValidado = (cliente) => {
 
-    switch (nombreBarrio) {
-        case 'Belgrano':
-            valorMetro = metroBelgrano
-            break
-        case 'Palermo':
-            valorMetro = metroPalermo
-            break
-        case 'Recoleta':
-            valorMetro = metroRecoleta
-            break
-        case 'Caballito':
-            valorMetro = metroBelgrano
-            break
-        case 'Almagro':
-            valorMetro = metroPalermo
-            break
-        case 'Mataderos':
-            valorMetro = metroMataderos
-            break
-        case 'Barracas':
-            valorMetro = metroRecoleta
-            break
-        case 'La Boca':
-            valorMetro = metroRecoleta
-            break
-        default:
-            alert('Te contamos los valores de metro cuadrado por cada barrio: \n 1- Belgrano: u$s '  + metroBelgrano + ' \n 2- Palermo: u$s '  + metroBelgrano + ' \n 3- Recoleta: u$s '  + metroPalermo + ' \n 4- Caballito: u$s '  + metroCaballito + ' \n  5- Almagro: u$s '  + metroAlmagro + ' \n  6- Mataderos: u$s '  + metroMataderos + ' \n  7- Barracas: u$s '  + metroBarracas + ' \n  8- La Boca: u$s '  + metroBoca + ' \n Y que un departamento de 2 ambientes con 1 dormitorios más cocina y Living Comedor de ' + metrosDosAmbientes + ' metros cuadrados te saldría en promedio : u$s ' + dosAmbientes)
-            valorMetro = 0
-            break
+    if (cliente == '')  {
+
+        alert('Debes ingresar tu nombre para continuar')
+
+        while (cliente == '')  {
+            cliente = prompt('Ingresá tu Nombre:')
+        }
     }
 
-    return valorMetro
+    return cliente
 }
+
 
 let nombreCliente = clienteValidado(cliente)
 
@@ -250,8 +269,9 @@ if(nombreCliente === null) {
 
 } else {
 
-    dondeVivir(nombreCliente.toUpperCase())
+    barriosActualizadoPromedio(nombreCliente.toUpperCase())
 }
+
 
 
 
